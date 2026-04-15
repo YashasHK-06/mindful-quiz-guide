@@ -9,38 +9,147 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TeacherDashboardRouteImport } from './routes/teacher.dashboard'
+import { Route as StudentDashboardRouteImport } from './routes/student.dashboard'
+import { Route as TeacherExamExamIdRouteImport } from './routes/teacher.exam.$examId'
+import { Route as StudentExamExamIdRouteImport } from './routes/student.exam.$examId'
+import { Route as TeacherExamExamIdSubmissionsRouteImport } from './routes/teacher.exam.$examId.submissions'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TeacherDashboardRoute = TeacherDashboardRouteImport.update({
+  id: '/teacher/dashboard',
+  path: '/teacher/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentDashboardRoute = StudentDashboardRouteImport.update({
+  id: '/student/dashboard',
+  path: '/student/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeacherExamExamIdRoute = TeacherExamExamIdRouteImport.update({
+  id: '/teacher/exam/$examId',
+  path: '/teacher/exam/$examId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentExamExamIdRoute = StudentExamExamIdRouteImport.update({
+  id: '/student/exam/$examId',
+  path: '/student/exam/$examId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeacherExamExamIdSubmissionsRoute =
+  TeacherExamExamIdSubmissionsRouteImport.update({
+    id: '/submissions',
+    path: '/submissions',
+    getParentRoute: () => TeacherExamExamIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/teacher/dashboard': typeof TeacherDashboardRoute
+  '/student/exam/$examId': typeof StudentExamExamIdRoute
+  '/teacher/exam/$examId': typeof TeacherExamExamIdRouteWithChildren
+  '/teacher/exam/$examId/submissions': typeof TeacherExamExamIdSubmissionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/teacher/dashboard': typeof TeacherDashboardRoute
+  '/student/exam/$examId': typeof StudentExamExamIdRoute
+  '/teacher/exam/$examId': typeof TeacherExamExamIdRouteWithChildren
+  '/teacher/exam/$examId/submissions': typeof TeacherExamExamIdSubmissionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/teacher/dashboard': typeof TeacherDashboardRoute
+  '/student/exam/$examId': typeof StudentExamExamIdRoute
+  '/teacher/exam/$examId': typeof TeacherExamExamIdRouteWithChildren
+  '/teacher/exam/$examId/submissions': typeof TeacherExamExamIdSubmissionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/student/dashboard'
+    | '/teacher/dashboard'
+    | '/student/exam/$examId'
+    | '/teacher/exam/$examId'
+    | '/teacher/exam/$examId/submissions'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/student/dashboard'
+    | '/teacher/dashboard'
+    | '/student/exam/$examId'
+    | '/teacher/exam/$examId'
+    | '/teacher/exam/$examId/submissions'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/student/dashboard'
+    | '/teacher/dashboard'
+    | '/student/exam/$examId'
+    | '/teacher/exam/$examId'
+    | '/teacher/exam/$examId/submissions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
+  StudentDashboardRoute: typeof StudentDashboardRoute
+  TeacherDashboardRoute: typeof TeacherDashboardRoute
+  StudentExamExamIdRoute: typeof StudentExamExamIdRoute
+  TeacherExamExamIdRoute: typeof TeacherExamExamIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +157,63 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/teacher/dashboard': {
+      id: '/teacher/dashboard'
+      path: '/teacher/dashboard'
+      fullPath: '/teacher/dashboard'
+      preLoaderRoute: typeof TeacherDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/dashboard': {
+      id: '/student/dashboard'
+      path: '/student/dashboard'
+      fullPath: '/student/dashboard'
+      preLoaderRoute: typeof StudentDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teacher/exam/$examId': {
+      id: '/teacher/exam/$examId'
+      path: '/teacher/exam/$examId'
+      fullPath: '/teacher/exam/$examId'
+      preLoaderRoute: typeof TeacherExamExamIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/exam/$examId': {
+      id: '/student/exam/$examId'
+      path: '/student/exam/$examId'
+      fullPath: '/student/exam/$examId'
+      preLoaderRoute: typeof StudentExamExamIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teacher/exam/$examId/submissions': {
+      id: '/teacher/exam/$examId/submissions'
+      path: '/submissions'
+      fullPath: '/teacher/exam/$examId/submissions'
+      preLoaderRoute: typeof TeacherExamExamIdSubmissionsRouteImport
+      parentRoute: typeof TeacherExamExamIdRoute
+    }
   }
 }
 
+interface TeacherExamExamIdRouteChildren {
+  TeacherExamExamIdSubmissionsRoute: typeof TeacherExamExamIdSubmissionsRoute
+}
+
+const TeacherExamExamIdRouteChildren: TeacherExamExamIdRouteChildren = {
+  TeacherExamExamIdSubmissionsRoute: TeacherExamExamIdSubmissionsRoute,
+}
+
+const TeacherExamExamIdRouteWithChildren =
+  TeacherExamExamIdRoute._addFileChildren(TeacherExamExamIdRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
+  StudentDashboardRoute: StudentDashboardRoute,
+  TeacherDashboardRoute: TeacherDashboardRoute,
+  StudentExamExamIdRoute: StudentExamExamIdRoute,
+  TeacherExamExamIdRoute: TeacherExamExamIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
