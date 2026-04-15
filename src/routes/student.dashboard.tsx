@@ -56,35 +56,17 @@ function StudentDashboard() {
     if (!code.trim()) return;
     setJoining(true);
     try {
-      // Find exam by code
-      const { data: exam, error: findError } = await supabase
-        .from("exams")
-        .select("id, title, is_published")
-        .eq("exam_code", code.toUpperCase().trim())
-        .single();
-
-      if (findError || !exam) {
-        toast.error("Invalid exam code. Please check and try again.");
-        return;
-      }
-      if (!exam.is_published) {
-        toast.error("This exam is not published yet.");
-        return;
-      }
-
-      const { error: enrollError } = await supabase.from("exam_enrollments").insert({
-        student_id: user!.id,
-        exam_id: exam.id,
-      });
-
-      if (enrollError) {
-        if (enrollError.code === "23505") {
-          toast.info("You're already enrolled in this exam!");
+      const { data, error } = await supabase.rpc("join_exam_by_code", { _code: code });
+      if (error) throw error;
+      const result = data as any;
+      if (result?.error) {
+        if (result.error === "Already enrolled") {
+          toast.info(`You're already enrolled in "${result.exam_title}"!`);
         } else {
-          throw enrollError;
+          toast.error(result.error);
         }
       } else {
-        toast.success(`Enrolled in "${exam.title}"!`);
+        toast.success(`Enrolled in "${result.exam_title}"!`);
       }
       setCode("");
       fetchData();
