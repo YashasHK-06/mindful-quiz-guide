@@ -14,16 +14,220 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      exam_enrollments: {
+        Row: {
+          enrolled_at: string
+          exam_id: string
+          id: string
+          student_id: string
+        }
+        Insert: {
+          enrolled_at?: string
+          exam_id: string
+          id?: string
+          student_id: string
+        }
+        Update: {
+          enrolled_at?: string
+          exam_id?: string
+          id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_enrollments_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exams: {
+        Row: {
+          created_at: string
+          description: string | null
+          exam_code: string
+          id: string
+          is_published: boolean
+          passing_score: number | null
+          teacher_id: string
+          time_limit_minutes: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          exam_code: string
+          id?: string
+          is_published?: boolean
+          passing_score?: number | null
+          teacher_id: string
+          time_limit_minutes?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          exam_code?: string
+          id?: string
+          is_published?: boolean
+          passing_score?: number | null
+          teacher_id?: string
+          time_limit_minutes?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          correct_answers: Json | null
+          created_at: string
+          exam_id: string
+          id: string
+          options: Json | null
+          points: number
+          question_text: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          sort_order: number
+        }
+        Insert: {
+          correct_answers?: Json | null
+          created_at?: string
+          exam_id: string
+          id?: string
+          options?: Json | null
+          points?: number
+          question_text: string
+          question_type?: Database["public"]["Enums"]["question_type"]
+          sort_order?: number
+        }
+        Update: {
+          correct_answers?: Json | null
+          created_at?: string
+          exam_id?: string
+          id?: string
+          options?: Json | null
+          points?: number
+          question_text?: string
+          question_type?: Database["public"]["Enums"]["question_type"]
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submissions: {
+        Row: {
+          answers: Json
+          created_at: string
+          exam_id: string
+          id: string
+          score: number | null
+          started_at: string
+          student_id: string
+          submitted_at: string | null
+          warning_count: number
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          exam_id: string
+          id?: string
+          score?: number | null
+          started_at?: string
+          student_id: string
+          submitted_at?: string | null
+          warning_count?: number
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          exam_id?: string
+          id?: string
+          score?: number | null
+          started_at?: string
+          student_id?: string
+          submitted_at?: string | null
+          warning_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "teacher" | "student"
+      question_type: "multiple_select" | "essay"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +354,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["teacher", "student"],
+      question_type: ["multiple_select", "essay"],
+    },
   },
 } as const
