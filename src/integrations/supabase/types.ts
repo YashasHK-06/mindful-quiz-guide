@@ -224,6 +224,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      join_exam_by_code: { Args: { _code: string }; Returns: Json }
     }
     Enums: {
       app_role: "teacher" | "student"
