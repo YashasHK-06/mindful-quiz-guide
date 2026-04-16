@@ -12,13 +12,42 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   const fetchRole = useCallback(async (userId: string) => {
-    const r = await getUserRole(userId);
-    setRole(r);
+    try {
+      const r = await getUserRole(userId);
+      setRole(r);
+    } catch {
+      setRole(null);
+    }
   }, []);
 
   useEffect(() => {
+    let mounted = true;
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (!mounted) return;
+      if (error) {
+        console.error("getSession error:", error);
+        setLoading(false);
+        return;
+      }
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) {
+        fetchRole(u.id).finally(() => {
+          if (mounted) setLoading(false);
+        });
+      } else {
+        setLoading(false);
+      }
+    }).catch(() => {
+      if (mounted) setLoading(false);
+    });
+
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
+        if (!mounted) return;
         const u = session?.user ?? null;
         setUser(u);
         if (u) {
@@ -30,16 +59,16 @@ export function useAuth() {
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      const u = session?.user ?? null;
-      setUser(u);
-      if (u) {
-        fetchRole(u.id);
-      }
-      setLoading(false);
-    });
+    // Safety timeout - never stay loading forever
+    const timeout = setTimeout(() => {
+      if (mounted) setLoading(false);
+    }, 5000);
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      clearTimeout(timeout);
+      subscription.unsubscribe();
+    };
   }, [fetchRole]);
 
   return { user, role, loading };
