@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -14,8 +15,17 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { user, role, loading } = useAuth();
+  const navigate = useNavigate();
 
-  if (loading) {
+  useEffect(() => {
+    if (!loading && user && role === "teacher") {
+      navigate({ to: "/teacher/dashboard" });
+    } else if (!loading && user && role === "student") {
+      navigate({ to: "/student/dashboard" });
+    }
+  }, [loading, user, role, navigate]);
+
+  if (loading || (user && !role)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
@@ -26,36 +36,9 @@ function Index() {
     );
   }
 
-  if (user && !role) {
-    // User is logged in but role not yet fetched — show loading
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm text-muted-foreground">Loading your dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (user && role === "teacher") {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Link to="/teacher/dashboard">
-          <Button size="lg">Go to Teacher Dashboard</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  if (user && role === "student") {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Link to="/student/dashboard">
-          <Button size="lg">Go to Student Dashboard</Button>
-        </Link>
-      </div>
-    );
+  if (user && role) {
+    // Will redirect via useEffect
+    return null;
   }
 
   return (
