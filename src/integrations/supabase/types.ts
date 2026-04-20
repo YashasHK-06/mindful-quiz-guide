@@ -79,10 +79,12 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          ends_at: string | null
           exam_code: string
           id: string
           is_published: boolean
           passing_score: number | null
+          starts_at: string | null
           teacher_id: string
           time_limit_minutes: number
           title: string
@@ -91,10 +93,12 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          ends_at?: string | null
           exam_code: string
           id?: string
           is_published?: boolean
           passing_score?: number | null
+          starts_at?: string | null
           teacher_id: string
           time_limit_minutes?: number
           title: string
@@ -103,10 +107,12 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          ends_at?: string | null
           exam_code?: string
           id?: string
           is_published?: boolean
           passing_score?: number | null
+          starts_at?: string | null
           teacher_id?: string
           time_limit_minutes?: number
           title?: string
