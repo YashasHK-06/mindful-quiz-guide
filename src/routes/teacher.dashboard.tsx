@@ -205,13 +205,15 @@ function TeacherDashboard() {
               </Card>
             )}
 
-            <Card className="opacity-80">
-              <CardContent className="flex flex-col items-center gap-2 p-6 text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-2xl">👥</div>
-                <p className="font-semibold text-foreground">Attendees</p>
-                <p className="text-xs text-muted-foreground">{stats.totalEnrollments} enrolled students</p>
-              </CardContent>
-            </Card>
+            <Link to="/teacher/exams">
+              <Card className="h-full cursor-pointer transition-colors hover:border-primary">
+                <CardContent className="flex flex-col items-center gap-2 p-6 text-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-2xl">📚</div>
+                  <p className="font-semibold text-foreground">My Exams</p>
+                  <p className="text-xs text-muted-foreground">View all by status & code</p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
 
