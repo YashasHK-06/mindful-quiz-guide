@@ -150,9 +150,9 @@ function TeacherDashboard() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Card className="cursor-pointer transition-colors hover:border-primary">
-                  <CardContent className="flex flex-col items-center gap-2 p-6 text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-2xl">📝</div>
+                <Card className="cursor-pointer hover-lift shadow-card border-2 border-transparent hover:border-primary/40">
+                  <CardContent className="flex flex-col items-center gap-3 p-6 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary text-2xl text-primary-foreground shadow-glow">📝</div>
                     <p className="font-semibold text-foreground">Set a Paper</p>
                     <p className="text-xs text-muted-foreground">Create a new exam</p>
                   </CardContent>
@@ -174,18 +174,18 @@ function TeacherDashboard() {
 
             {exams.length > 0 ? (
               <Link to="/teacher/exam/$examId" params={{ examId: exams[0].id }}>
-                <Card className="h-full cursor-pointer transition-colors hover:border-primary">
-                  <CardContent className="flex flex-col items-center gap-2 p-6 text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-2xl">✏️</div>
+                <Card className="h-full cursor-pointer hover-lift shadow-card border-2 border-transparent hover:border-success/40">
+                  <CardContent className="flex flex-col items-center gap-3 p-6 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-success/15 text-2xl text-success">✏️</div>
                     <p className="font-semibold text-foreground">Edit Questions</p>
                     <p className="text-xs text-muted-foreground">Manage exam questions</p>
                   </CardContent>
                 </Card>
               </Link>
             ) : (
-              <Card className="opacity-50">
-                <CardContent className="flex flex-col items-center gap-2 p-6 text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-2xl">✏️</div>
+              <Card className="opacity-60">
+                <CardContent className="flex flex-col items-center gap-3 p-6 text-center">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-2xl">✏️</div>
                   <p className="font-semibold text-foreground">Edit Questions</p>
                   <p className="text-xs text-muted-foreground">Create an exam first</p>
                 </CardContent>
@@ -194,18 +194,18 @@ function TeacherDashboard() {
 
             {exams.length > 0 ? (
               <Link to="/teacher/exam/$examId/submissions" params={{ examId: exams[0].id }}>
-                <Card className="h-full cursor-pointer transition-colors hover:border-primary">
-                  <CardContent className="flex flex-col items-center gap-2 p-6 text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-2xl">📊</div>
+                <Card className="h-full cursor-pointer hover-lift shadow-card border-2 border-transparent hover:border-warning/40">
+                  <CardContent className="flex flex-col items-center gap-3 p-6 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-warning/15 text-2xl text-warning">📊</div>
                     <p className="font-semibold text-foreground">Analyse Students</p>
                     <p className="text-xs text-muted-foreground">Review submissions</p>
                   </CardContent>
                 </Card>
               </Link>
             ) : (
-              <Card className="opacity-50">
-                <CardContent className="flex flex-col items-center gap-2 p-6 text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-2xl">📊</div>
+              <Card className="opacity-60">
+                <CardContent className="flex flex-col items-center gap-3 p-6 text-center">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-2xl">📊</div>
                   <p className="font-semibold text-foreground">Analyse Students</p>
                   <p className="text-xs text-muted-foreground">Create an exam first</p>
                 </CardContent>
@@ -213,9 +213,9 @@ function TeacherDashboard() {
             )}
 
             <Link to="/teacher/exams">
-              <Card className="h-full cursor-pointer transition-colors hover:border-primary">
-                <CardContent className="flex flex-col items-center gap-2 p-6 text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-2xl">📚</div>
+              <Card className="h-full cursor-pointer hover-lift shadow-card border-2 border-transparent hover:border-info/40">
+                <CardContent className="flex flex-col items-center gap-3 p-6 text-center">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-info/15 text-2xl text-info">📚</div>
                   <p className="font-semibold text-foreground">My Exams</p>
                   <p className="text-xs text-muted-foreground">View all by status & code</p>
                 </CardContent>
