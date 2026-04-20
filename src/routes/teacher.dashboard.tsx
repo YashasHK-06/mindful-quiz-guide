@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { signOut, generateExamCode } from "@/lib/auth";
+import { signOut } from "@/lib/auth";
 import type { Tables } from "@/integrations/supabase/types";
 import {
   Dialog,
@@ -17,6 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ExamWizard } from "@/components/ExamWizard";
 
 export const Route = createFileRoute("/teacher/dashboard")({
   component: TeacherDashboard,
