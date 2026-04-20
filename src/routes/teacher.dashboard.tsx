@@ -39,11 +39,6 @@ function TeacherDashboard() {
   const [exams, setExams] = useState<Tables<"exams">[]>([]);
   const [stats, setStats] = useState<ExamStats>({ totalExams: 0, publishedExams: 0, totalSubmissions: 0, totalEnrollments: 0 });
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [timeLimit, setTimeLimit] = useState(60);
-  const [passingScore, setPassingScore] = useState(0);
-  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     if (!loading && (!user || role !== "teacher")) {
