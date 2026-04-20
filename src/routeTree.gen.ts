@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TeacherExamsRouteImport } from './routes/teacher.exams'
 import { Route as TeacherDashboardRouteImport } from './routes/teacher.dashboard'
 import { Route as StudentDashboardRouteImport } from './routes/student.dashboard'
 import { Route as TeacherExamExamIdRouteImport } from './routes/teacher.exam.$examId'
@@ -31,6 +32,11 @@ const LoginRoute = LoginRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeacherExamsRoute = TeacherExamsRouteImport.update({
+  id: '/teacher/exams',
+  path: '/teacher/exams',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TeacherDashboardRoute = TeacherDashboardRouteImport.update({
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/teacher/dashboard': typeof TeacherDashboardRoute
+  '/teacher/exams': typeof TeacherExamsRoute
   '/student/exam/$examId': typeof StudentExamExamIdRoute
   '/teacher/exam/$examId': typeof TeacherExamExamIdRouteWithChildren
   '/teacher/exam/$examId/submissions': typeof TeacherExamExamIdSubmissionsRoute
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/teacher/dashboard': typeof TeacherDashboardRoute
+  '/teacher/exams': typeof TeacherExamsRoute
   '/student/exam/$examId': typeof StudentExamExamIdRoute
   '/teacher/exam/$examId': typeof TeacherExamExamIdRouteWithChildren
   '/teacher/exam/$examId/submissions': typeof TeacherExamExamIdSubmissionsRoute
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/teacher/dashboard': typeof TeacherDashboardRoute
+  '/teacher/exams': typeof TeacherExamsRoute
   '/student/exam/$examId': typeof StudentExamExamIdRoute
   '/teacher/exam/$examId': typeof TeacherExamExamIdRouteWithChildren
   '/teacher/exam/$examId/submissions': typeof TeacherExamExamIdSubmissionsRoute
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/student/dashboard'
     | '/teacher/dashboard'
+    | '/teacher/exams'
     | '/student/exam/$examId'
     | '/teacher/exam/$examId'
     | '/teacher/exam/$examId/submissions'
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/student/dashboard'
     | '/teacher/dashboard'
+    | '/teacher/exams'
     | '/student/exam/$examId'
     | '/teacher/exam/$examId'
     | '/teacher/exam/$examId/submissions'
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/student/dashboard'
     | '/teacher/dashboard'
+    | '/teacher/exams'
     | '/student/exam/$examId'
     | '/teacher/exam/$examId'
     | '/teacher/exam/$examId/submissions'
@@ -130,6 +142,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
   TeacherDashboardRoute: typeof TeacherDashboardRoute
+  TeacherExamsRoute: typeof TeacherExamsRoute
   StudentExamExamIdRoute: typeof StudentExamExamIdRoute
   TeacherExamExamIdRoute: typeof TeacherExamExamIdRouteWithChildren
 }
@@ -155,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teacher/exams': {
+      id: '/teacher/exams'
+      path: '/teacher/exams'
+      fullPath: '/teacher/exams'
+      preLoaderRoute: typeof TeacherExamsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/teacher/dashboard': {
@@ -212,6 +232,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   StudentDashboardRoute: StudentDashboardRoute,
   TeacherDashboardRoute: TeacherDashboardRoute,
+  TeacherExamsRoute: TeacherExamsRoute,
   StudentExamExamIdRoute: StudentExamExamIdRoute,
   TeacherExamExamIdRoute: TeacherExamExamIdRouteWithChildren,
 }
