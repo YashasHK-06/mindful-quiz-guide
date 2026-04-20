@@ -151,33 +151,17 @@ function TeacherDashboard() {
                   </CardContent>
                 </Card>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-2xl">
                 <DialogHeader>
                   <DialogTitle>Create New Exam</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleCreateExam} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Title</Label>
-                    <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Description</Label>
-                    <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Time Limit (min)</Label>
-                      <Input type="number" value={timeLimit} onChange={(e) => setTimeLimit(Number(e.target.value))} min={1} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Passing Score</Label>
-                      <Input type="number" value={passingScore} onChange={(e) => setPassingScore(Number(e.target.value))} min={0} />
-                    </div>
-                  </div>
-                  <Button type="submit" className="w-full" disabled={creating}>
-                    {creating ? "Creating..." : "Create Exam"}
-                  </Button>
-                </form>
+                {dialogOpen && user && (
+                  <ExamWizard
+                    userId={user.id}
+                    onClose={() => setDialogOpen(false)}
+                    onCreated={fetchExams}
+                  />
+                )}
               </DialogContent>
             </Dialog>
 
