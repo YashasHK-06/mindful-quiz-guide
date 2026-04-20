@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { signOut, generateExamCode } from "@/lib/auth";
+import { signOut } from "@/lib/auth";
 import type { Tables } from "@/integrations/supabase/types";
 import {
   Dialog,
@@ -17,6 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ExamWizard } from "@/components/ExamWizard";
 
 export const Route = createFileRoute("/teacher/dashboard")({
   component: TeacherDashboard,
@@ -38,11 +39,6 @@ function TeacherDashboard() {
   const [exams, setExams] = useState<Tables<"exams">[]>([]);
   const [stats, setStats] = useState<ExamStats>({ totalExams: 0, publishedExams: 0, totalSubmissions: 0, totalEnrollments: 0 });
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [timeLimit, setTimeLimit] = useState(60);
-  const [passingScore, setPassingScore] = useState(0);
-  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     if (!loading && (!user || role !== "teacher")) {
@@ -88,33 +84,6 @@ function TeacherDashboard() {
     });
   }
 
-  async function handleCreateExam(e: React.FormEvent) {
-    e.preventDefault();
-    setCreating(true);
-    try {
-      const code = generateExamCode();
-      const { error } = await supabase.from("exams").insert({
-        teacher_id: user!.id,
-        title,
-        description,
-        time_limit_minutes: timeLimit,
-        passing_score: passingScore,
-        exam_code: code,
-      });
-      if (error) throw error;
-      toast.success(`Exam created! Code: ${code}`);
-      setDialogOpen(false);
-      setTitle("");
-      setDescription("");
-      setTimeLimit(60);
-      setPassingScore(0);
-      fetchExams();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to create exam");
-    } finally {
-      setCreating(false);
-    }
-  }
 
   if (loading) return (
     <div className="flex min-h-screen items-center justify-center">
@@ -182,33 +151,17 @@ function TeacherDashboard() {
                   </CardContent>
                 </Card>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-2xl">
                 <DialogHeader>
                   <DialogTitle>Create New Exam</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleCreateExam} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Title</Label>
-                    <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Description</Label>
-                    <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Time Limit (min)</Label>
-                      <Input type="number" value={timeLimit} onChange={(e) => setTimeLimit(Number(e.target.value))} min={1} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Passing Score</Label>
-                      <Input type="number" value={passingScore} onChange={(e) => setPassingScore(Number(e.target.value))} min={0} />
-                    </div>
-                  </div>
-                  <Button type="submit" className="w-full" disabled={creating}>
-                    {creating ? "Creating..." : "Create Exam"}
-                  </Button>
-                </form>
+                {dialogOpen && user && (
+                  <ExamWizard
+                    userId={user.id}
+                    onClose={() => setDialogOpen(false)}
+                    onCreated={fetchExams}
+                  />
+                )}
               </DialogContent>
             </Dialog>
 
