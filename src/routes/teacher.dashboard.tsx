@@ -84,33 +84,6 @@ function TeacherDashboard() {
     });
   }
 
-  async function handleCreateExam(e: React.FormEvent) {
-    e.preventDefault();
-    setCreating(true);
-    try {
-      const code = generateExamCode();
-      const { error } = await supabase.from("exams").insert({
-        teacher_id: user!.id,
-        title,
-        description,
-        time_limit_minutes: timeLimit,
-        passing_score: passingScore,
-        exam_code: code,
-      });
-      if (error) throw error;
-      toast.success(`Exam created! Code: ${code}`);
-      setDialogOpen(false);
-      setTitle("");
-      setDescription("");
-      setTimeLimit(60);
-      setPassingScore(0);
-      fetchExams();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to create exam");
-    } finally {
-      setCreating(false);
-    }
-  }
 
   if (loading) return (
     <div className="flex min-h-screen items-center justify-center">
