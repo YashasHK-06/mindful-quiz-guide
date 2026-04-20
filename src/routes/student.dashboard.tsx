@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { signOut } from "@/lib/auth";
 import type { Tables } from "@/integrations/supabase/types";
+import { BookOpen, Clock, CheckCircle2, KeyRound, LogOut, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/student/dashboard")({
   component: StudentDashboard,
@@ -77,69 +78,166 @@ function StudentDashboard() {
     }
   }
 
-  if (loading) return <div className="flex min-h-screen items-center justify-center"><p className="text-muted-foreground">Loading...</p></div>;
+  if (loading) return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+    </div>
+  );
+
+  const completed = submissions.filter((s) => s.submitted_at).length;
+  const pending = enrolledExams.length - completed;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-          <h1 className="text-xl font-bold text-foreground">Student Dashboard</h1>
-          <Button variant="ghost" onClick={() => { signOut(); navigate({ to: "/" }); }}>
-            Log Out
+    <div className="min-h-screen">
+      {/* Hero header */}
+      <header className="bg-gradient-hero text-primary-foreground shadow-glow">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+              <Sparkles className="h-6 w-6" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">Welcome back 👋</h1>
+              <p className="text-sm text-white/80">Student Dashboard</p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            className="text-white hover:bg-white/15 hover:text-white"
+            onClick={() => { signOut(); navigate({ to: "/" }); }}
+          >
+            <LogOut className="mr-2 h-4 w-4" /> Log Out
           </Button>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-8">
+      <main className="mx-auto max-w-6xl px-6 py-8 animate-fade-in">
+        {/* Stat cards */}
+        <div className="mb-8 grid gap-4 sm:grid-cols-3">
+          <Card className="hover-lift shadow-card">
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="icon-tile" style={{ background: "linear-gradient(135deg, oklch(0.55 0.22 268), oklch(0.7 0.2 295))" }}>
+                <BookOpen className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Enrolled</p>
+                <p className="text-2xl font-bold">{enrolledExams.length}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="hover-lift shadow-card">
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-warning/15 text-warning">
+                <Clock className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Pending</p>
+                <p className="text-2xl font-bold">{pending}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="hover-lift shadow-card">
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-success/15 text-success">
+                <CheckCircle2 className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Completed</p>
+                <p className="text-2xl font-bold">{completed}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Join Exam */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Join an Exam</CardTitle>
-            <CardDescription>Enter the 6-digit exam code from your teacher</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleJoinExam} className="flex gap-3">
-              <Input
-                value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase())}
-                placeholder="e.g. ABC123"
-                maxLength={6}
-                className="w-40 font-mono text-lg tracking-widest"
-              />
-              <Button type="submit" disabled={joining || code.length < 6}>
-                {joining ? "Joining..." : "Join"}
-              </Button>
-            </form>
-          </CardContent>
+        <Card className="mb-10 overflow-hidden border-0 shadow-glow">
+          <div className="bg-gradient-primary p-[1px]">
+            <div className="rounded-[inherit] bg-card">
+              <CardHeader className="flex flex-row items-center gap-3 pb-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                  <KeyRound className="h-5 w-5" />
+                </div>
+                <div>
+                  <CardTitle>Join an Exam</CardTitle>
+                  <CardDescription>Enter the 6-digit code from your teacher</CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleJoinExam} className="flex flex-wrap gap-3">
+                  <Input
+                    value={code}
+                    onChange={(e) => setCode(e.target.value.toUpperCase())}
+                    placeholder="ABC123"
+                    maxLength={6}
+                    className="w-44 font-mono text-lg font-bold tracking-[0.4em] uppercase"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={joining || code.length < 6}
+                    className="bg-gradient-primary text-primary-foreground shadow-glow hover:opacity-90 transition-opacity"
+                  >
+                    {joining ? "Joining..." : "Join Exam"}
+                  </Button>
+                </form>
+              </CardContent>
+            </div>
+          </div>
         </Card>
 
         {/* Enrolled Exams */}
-        <h2 className="mb-4 text-2xl font-semibold text-foreground">Your Exams</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-2xl font-semibold tracking-tight">Your Exams</h2>
+          <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+            {enrolledExams.length} total
+          </span>
+        </div>
+
         {enrolledExams.length === 0 ? (
-          <p className="text-muted-foreground">No exams yet. Join one using a code above!</p>
+          <Card className="shadow-card">
+            <CardContent className="flex flex-col items-center gap-3 py-16 text-center">
+              <div className="icon-tile">
+                <BookOpen className="h-6 w-6" />
+              </div>
+              <p className="text-lg font-medium">No exams yet</p>
+              <p className="text-sm text-muted-foreground">Use the form above to join your first exam</p>
+            </CardContent>
+          </Card>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             {enrolledExams.map((exam) => {
               const sub = submissions.find((s) => s.exam_id === exam.id);
               const hasSubmitted = !!sub?.submitted_at;
               return (
-                <Card key={exam.id}>
+                <Card key={exam.id} className="group hover-lift overflow-hidden shadow-card">
+                  <div className={`h-1 ${hasSubmitted ? "bg-success" : "bg-gradient-primary"}`} />
                   <CardHeader>
-                    <CardTitle>{exam.title}</CardTitle>
-                    <CardDescription>{exam.description}</CardDescription>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <CardTitle className="truncate">{exam.title}</CardTitle>
+                        <CardDescription className="mt-1 line-clamp-2">{exam.description || "No description"}</CardDescription>
+                      </div>
+                      <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        hasSubmitted ? "bg-success/15 text-success" : "bg-primary/10 text-primary"
+                      }`}>
+                        {hasSubmitted ? "Done" : "Open"}
+                      </span>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="mb-3 flex gap-3 text-sm text-muted-foreground">
+                    <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
+                      <Clock className="h-4 w-4" />
                       <span>{exam.time_limit_minutes} min</span>
                     </div>
                     {hasSubmitted ? (
-                      <div className="rounded-md bg-muted px-3 py-2 text-sm">
-                        <span className="font-medium">Submitted</span>
-                        {sub.score !== null && <span className="ml-2">— Score: {sub.score}</span>}
+                      <div className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+                        <span className="font-medium">✓ Submitted</span>
+                        {sub.score !== null && <span className="ml-2 font-semibold">Score: {sub.score}</span>}
                       </div>
                     ) : (
                       <Link to="/student/exam/$examId" params={{ examId: exam.id }}>
-                        <Button className="w-full">Start Exam</Button>
+                        <Button className="w-full bg-gradient-primary text-primary-foreground shadow-glow hover:opacity-90 transition-opacity">
+                          Start Exam →
+                        </Button>
                       </Link>
                     )}
                   </CardContent>

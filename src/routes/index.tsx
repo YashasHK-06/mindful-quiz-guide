@@ -42,21 +42,30 @@ function Index() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-8 bg-background px-4">
-      <div className="text-center">
-        <h1 className="text-5xl font-extrabold tracking-tight text-foreground">
-          Exam<span className="text-primary">Guard</span>
+    <div className="relative flex min-h-screen flex-col items-center justify-center gap-10 overflow-hidden px-4">
+      {/* Decorative background */}
+      <div className="absolute inset-0 -z-10 bg-gradient-subtle" />
+      <div className="absolute -top-32 left-1/2 -z-10 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-gradient-primary opacity-20 blur-3xl" />
+
+      <div className="text-center animate-fade-in">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-primary text-3xl shadow-glow">
+          🛡️
+        </div>
+        <h1 className="text-6xl font-extrabold tracking-tight">
+          <span className="text-gradient">ExamGuard</span>
         </h1>
-        <p className="mt-3 text-lg text-muted-foreground">
+        <p className="mt-4 text-lg text-muted-foreground">
           Secure online exams with live proctoring
         </p>
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-4 animate-scale-in">
         <Link to="/login">
-          <Button variant="outline" size="lg">Log In</Button>
+          <Button variant="outline" size="lg" className="hover-lift">Log In</Button>
         </Link>
         <Link to="/signup">
-          <Button size="lg">Sign Up</Button>
+          <Button size="lg" className="bg-gradient-primary text-primary-foreground shadow-glow hover:opacity-90 transition-opacity">
+            Get Started →
+          </Button>
         </Link>
       </div>
     </div>
