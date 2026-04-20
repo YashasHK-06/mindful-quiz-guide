@@ -92,47 +92,54 @@ function TeacherDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Exam<span className="text-primary">Guard</span>
-            </h1>
-            <p className="text-sm text-muted-foreground">Teacher Dashboard</p>
+    <div className="min-h-screen">
+      {/* Hero Header */}
+      <header className="bg-gradient-hero text-primary-foreground shadow-glow">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm text-2xl">🎓</div>
+            <div>
+              <h1 className="text-2xl font-bold">
+                Exam<span className="text-white/80">Guard</span>
+              </h1>
+              <p className="text-sm text-white/80">Teacher Dashboard</p>
+            </div>
           </div>
-          <Button variant="ghost" onClick={() => { signOut(); navigate({ to: "/" }); }}>
+          <Button
+            variant="ghost"
+            className="text-white hover:bg-white/15 hover:text-white"
+            onClick={() => { signOut(); navigate({ to: "/" }); }}
+          >
             Log Out
           </Button>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-8">
+      <main className="mx-auto max-w-6xl px-6 py-8 animate-fade-in">
         {/* Stats Overview */}
         <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardContent className="p-6">
-              <p className="text-sm font-medium text-muted-foreground">Total Exams</p>
-              <p className="mt-1 text-3xl font-bold text-foreground">{stats.totalExams}</p>
+          <Card className="hover-lift shadow-card border-l-4 border-l-primary">
+            <CardContent className="p-5">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Total Exams</p>
+              <p className="mt-1 text-3xl font-bold text-gradient">{stats.totalExams}</p>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-6">
-              <p className="text-sm font-medium text-muted-foreground">Published</p>
-              <p className="mt-1 text-3xl font-bold text-foreground">{stats.publishedExams}</p>
+          <Card className="hover-lift shadow-card border-l-4 border-l-success">
+            <CardContent className="p-5">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Published</p>
+              <p className="mt-1 text-3xl font-bold text-success">{stats.publishedExams}</p>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-6">
-              <p className="text-sm font-medium text-muted-foreground">Total Attendees</p>
-              <p className="mt-1 text-3xl font-bold text-foreground">{stats.totalEnrollments}</p>
+          <Card className="hover-lift shadow-card border-l-4 border-l-info">
+            <CardContent className="p-5">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Total Attendees</p>
+              <p className="mt-1 text-3xl font-bold text-info">{stats.totalEnrollments}</p>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-6">
-              <p className="text-sm font-medium text-muted-foreground">Submissions</p>
-              <p className="mt-1 text-3xl font-bold text-foreground">{stats.totalSubmissions}</p>
+          <Card className="hover-lift shadow-card border-l-4 border-l-warning">
+            <CardContent className="p-5">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Submissions</p>
+              <p className="mt-1 text-3xl font-bold text-warning">{stats.totalSubmissions}</p>
             </CardContent>
           </Card>
         </div>
