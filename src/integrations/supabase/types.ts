@@ -43,6 +43,38 @@ export type Database = {
           },
         ]
       }
+      exam_sections: {
+        Row: {
+          created_at: string
+          exam_id: string
+          id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          exam_id: string
+          id?: string
+          sort_order?: number
+          title?: string
+        }
+        Update: {
+          created_at?: string
+          exam_id?: string
+          id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_sections_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exams: {
         Row: {
           created_at: string
@@ -116,6 +148,7 @@ export type Database = {
           points: number
           question_text: string
           question_type: Database["public"]["Enums"]["question_type"]
+          section_id: string | null
           sort_order: number
         }
         Insert: {
@@ -127,6 +160,7 @@ export type Database = {
           points?: number
           question_text: string
           question_type?: Database["public"]["Enums"]["question_type"]
+          section_id?: string | null
           sort_order?: number
         }
         Update: {
@@ -138,6 +172,7 @@ export type Database = {
           points?: number
           question_text?: string
           question_type?: Database["public"]["Enums"]["question_type"]
+          section_id?: string | null
           sort_order?: number
         }
         Relationships: [
@@ -146,6 +181,13 @@ export type Database = {
             columns: ["exam_id"]
             isOneToOne: false
             referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "exam_sections"
             referencedColumns: ["id"]
           },
         ]
