@@ -265,6 +265,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      exam_is_published: { Args: { _exam_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -272,7 +273,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_enrolled: {
+        Args: { _exam_id: string; _user_id: string }
+        Returns: boolean
+      }
       join_exam_by_code: { Args: { _code: string }; Returns: Json }
+      owns_exam: {
+        Args: { _exam_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "teacher" | "student"
