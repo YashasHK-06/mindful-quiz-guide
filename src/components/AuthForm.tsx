@@ -59,11 +59,22 @@ export function LoginForm() {
   );
 }
 
-export function SignupForm() {
+export function SignupForm({
+  role: roleProp,
+  onRoleChange,
+}: {
+  role?: AppRole;
+  onRoleChange?: (r: AppRole) => void;
+} = {}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [role, setRole] = useState<AppRole>("student");
+  const [internalRole, setInternalRole] = useState<AppRole>("student");
+  const role = roleProp ?? internalRole;
+  const setRole = (r: AppRole) => {
+    setInternalRole(r);
+    onRoleChange?.(r);
+  };
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
