@@ -37,6 +37,10 @@ export const Route = createRootRoute({
       { property: "og:description", content: "Proctored online exams with camera monitoring and tab-switch detection" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "ExamGuard — Secure Online Exam Platform" },
+      { name: "twitter:description", content: "Proctored online exams with camera monitoring and tab-switch detection" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2c39e3d6-80be-4de8-8b7a-df5ee0fcb310/id-preview-92f866b8--dbd31707-9168-4e28-ac2c-4921fa91bff0.lovable.app-1777027642202.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2c39e3d6-80be-4de8-8b7a-df5ee0fcb310/id-preview-92f866b8--dbd31707-9168-4e28-ac2c-4921fa91bff0.lovable.app-1777027642202.png" },
     ],
     links: [
       {
