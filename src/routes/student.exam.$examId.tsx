@@ -70,6 +70,30 @@ function ExamTaker() {
   }
 
   async function startExam() {
+    // Pre-flight: verify camera + mic permission with a user gesture,
+    // then enter fullscreen before the exam begins.
+    try {
+      const testStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      // Confirm both tracks exist
+      if (testStream.getVideoTracks().length === 0 || testStream.getAudioTracks().length === 0) {
+        testStream.getTracks().forEach((t) => t.stop());
+        toast.error("Camera and microphone are both required to start.");
+        return;
+      }
+      // Stop test tracks — overlay will request its own stream
+      testStream.getTracks().forEach((t) => t.stop());
+    } catch (err) {
+      toast.error("Please allow camera and microphone access to start the exam.");
+      return;
+    }
+
+    try {
+      await document.documentElement.requestFullscreen();
+    } catch {
+      toast.error("Fullscreen is required to start the exam.");
+      return;
+    }
+
     const { data, error } = await supabase.from("submissions").insert({
       student_id: user!.id,
       exam_id: examId,
@@ -150,8 +174,10 @@ function ExamTaker() {
         <div className="rounded-lg bg-muted p-4 text-sm text-muted-foreground">
           <p className="font-medium text-foreground">Before you start:</p>
           <ul className="mt-2 list-disc pl-5 space-y-1">
-            <li>Camera and microphone access is required</li>
-            <li>Switching tabs will trigger a warning</li>
+            <li>Camera <strong>and</strong> microphone must stay on for the entire exam</li>
+            <li>The exam runs in <strong>fullscreen</strong> — exiting triggers a warning</li>
+            <li>Switching tabs, looking away, or multiple faces trigger warnings</li>
+            <li>Copy, paste, right-click, and dev tools are disabled</li>
             <li>After 3 warnings, the exam auto-submits</li>
           </ul>
         </div>
