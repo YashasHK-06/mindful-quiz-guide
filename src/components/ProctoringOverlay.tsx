@@ -16,10 +16,16 @@ export function ProctoringOverlay({ warningCount, onWarning, onAutoSubmit, maxWa
   const rafRef = useRef<number | null>(null);
   const lastWarnAtRef = useRef<Record<string, number>>({});
   const stateStartRef = useRef<Record<string, number>>({});
+  const streamRef = useRef<MediaStream | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const audioRafRef = useRef<number | null>(null);
   const [mediaReady, setMediaReady] = useState(false);
   const [mediaError, setMediaError] = useState<string | null>(null);
   const [status, setStatus] = useState<string>("Initializing...");
   const [statusOk, setStatusOk] = useState(true);
+  const [micActive, setMicActive] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Cooldown so we don't spam warnings every frame
   const WARN_COOLDOWN_MS = 8000;
@@ -56,10 +62,53 @@ export function ProctoringOverlay({ warningCount, onWarning, onAutoSubmit, maxWa
       try {
         stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         if (cancelled) return;
+        streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           await videoRef.current.play().catch(() => {});
         }
+
+        // Verify both tracks present & live
+        const vTracks = stream.getVideoTracks();
+        const aTracks = stream.getAudioTracks();
+        if (vTracks.length === 0) throw new Error("No camera detected");
+        if (aTracks.length === 0) throw new Error("No microphone detected");
+
+        // Monitor track endings (user revokes / unplugs)
+        const onTrackEnded = () => {
+          setMediaError("Camera or microphone was disabled. Please re-enable and refresh.");
+          onAutoSubmit();
+        };
+        vTracks.forEach((t) => (t.onended = onTrackEnded));
+        aTracks.forEach((t) => (t.onended = onTrackEnded));
+
+        // Audio level analyser to detect muted mic
+        try {
+          const AC: typeof AudioContext =
+            (window.AudioContext || (window as any).webkitAudioContext) as typeof AudioContext;
+          const ctx = new AC();
+          audioCtxRef.current = ctx;
+          const src = ctx.createMediaStreamSource(stream);
+          const analyser = ctx.createAnalyser();
+          analyser.fftSize = 512;
+          src.connect(analyser);
+          analyserRef.current = analyser;
+          const buf = new Uint8Array(analyser.frequencyBinCount);
+          const audioTick = () => {
+            if (!analyserRef.current) return;
+            analyserRef.current.getByteTimeDomainData(buf);
+            // Compute deviation from 128 (silence)
+            let sum = 0;
+            for (let i = 0; i < buf.length; i++) sum += Math.abs(buf[i] - 128);
+            const avg = sum / buf.length;
+            setMicActive(avg > 0.5);
+            audioRafRef.current = requestAnimationFrame(audioTick);
+          };
+          audioTick();
+        } catch (e) {
+          console.warn("Audio analyser failed", e);
+        }
+
         setMediaReady(true);
 
         // Load MediaPipe Face Detector
@@ -172,9 +221,14 @@ export function ProctoringOverlay({ warningCount, onWarning, onAutoSubmit, maxWa
     return () => {
       cancelled = true;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (audioRafRef.current) cancelAnimationFrame(audioRafRef.current);
+      audioCtxRef.current?.close().catch(() => {});
+      audioCtxRef.current = null;
+      analyserRef.current = null;
       detectorRef.current?.close();
       detectorRef.current = null;
       stream?.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -186,7 +240,13 @@ export function ProctoringOverlay({ warningCount, onWarning, onAutoSubmit, maxWa
     };
     const onBlur = () => maybeWarn("window_blur", "You left the exam window");
     const onFsChange = () => {
-      if (!document.fullscreenElement) maybeWarn("fullscreen_exit", "You exited fullscreen");
+      const fs = !!document.fullscreenElement;
+      setIsFullscreen(fs);
+      if (!fs) {
+        maybeWarn("fullscreen_exit", "You exited fullscreen — return to fullscreen");
+        // Try to re-enter
+        document.documentElement.requestFullscreen?.().catch(() => {});
+      }
     };
     const block = (e: Event) => {
       e.preventDefault();
@@ -236,11 +296,25 @@ export function ProctoringOverlay({ warningCount, onWarning, onAutoSubmit, maxWa
     if (!mediaReady) return;
     const el = document.documentElement;
     if (!document.fullscreenElement && el.requestFullscreen) {
-      el.requestFullscreen().catch(() => {
-        toast.info("Tip: enable fullscreen for the best exam experience.");
-      });
+      el.requestFullscreen()
+        .then(() => setIsFullscreen(true))
+        .catch(() => {
+          toast.error("Fullscreen is required. Click anywhere to enable.");
+        });
+    } else {
+      setIsFullscreen(true);
     }
   }, [mediaReady]);
+
+  // Click-anywhere fallback to enter fullscreen if browser blocked auto-request
+  useEffect(() => {
+    if (!mediaReady || isFullscreen) return;
+    const handler = () => {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    };
+    window.addEventListener("click", handler, { once: true });
+    return () => window.removeEventListener("click", handler);
+  }, [mediaReady, isFullscreen]);
 
   if (mediaError) {
     return (
@@ -269,14 +343,29 @@ export function ProctoringOverlay({ warningCount, onWarning, onAutoSubmit, maxWa
           ref={canvasRef}
           className="absolute inset-0 h-full w-full object-cover"
         />
+        {!isFullscreen && mediaReady && (
+          <div className="absolute inset-0 flex items-center justify-center bg-destructive/80 text-[10px] font-bold text-white">
+            Click to enter fullscreen
+          </div>
+        )}
       </div>
-      <div className="flex items-center justify-between gap-2 px-2 py-1 text-xs">
-        <span className={statusOk ? "text-green-500" : "text-destructive font-semibold"}>
-          {mediaReady ? status : "Connecting..."}
-        </span>
-        <span className={warningCount > 0 ? "font-bold text-destructive" : "text-muted-foreground"}>
-          {warningCount}/{maxWarnings}
-        </span>
+      <div className="space-y-1 px-2 py-1.5 text-xs">
+        <div className="flex items-center justify-between gap-2">
+          <span className={statusOk ? "text-green-500" : "text-destructive font-semibold"}>
+            {mediaReady ? status : "Connecting..."}
+          </span>
+          <span className={warningCount > 0 ? "font-bold text-destructive" : "text-muted-foreground"}>
+            {warningCount}/{maxWarnings}
+          </span>
+        </div>
+        <div className="flex items-center justify-between gap-2 text-[10px]">
+          <span className={micActive ? "text-green-500" : "text-yellow-500"}>
+            🎤 {micActive ? "Mic live" : "Silent"}
+          </span>
+          <span className={isFullscreen ? "text-green-500" : "text-destructive font-semibold"}>
+            {isFullscreen ? "⛶ Fullscreen" : "⛶ Windowed"}
+          </span>
+        </div>
       </div>
     </div>
   );
